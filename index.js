@@ -6,7 +6,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const postRoutes = require('./routes/route')
 const utils = require('./utils');
- 
+ const path= require('path');
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -50,7 +50,7 @@ app.use(function (req, res, next) {
 // request handlers
 app.get('/', (req, res) => {
   if (!req.user) return res.status(401).json({ success: false, message: 'Invalid user to access it.' });
-  res.send('Welcome to the Node.js Tutorial! - ' + req.user.name);
+  res.send( req.user.name);
 });
  
  
@@ -125,6 +125,12 @@ mongoose.connect(connectionUrl, {
     console.log("database connect")
 });
 
+
+if(process.env.NODE_ENV === "production"){
+app.use(express.static('client/build'));
+app.get('*', (req, res)=>{
+res.sendFile(path.resolve(__dirname, 'client','build', 'index.html'));
+})}
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`application start at port ${PORT}`)
